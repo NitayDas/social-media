@@ -1,3 +1,74 @@
-from django.shortcuts import render
+# server/posts/views.py
 
-# Create your views here.
+from rest_framework import viewsets, mixins, status, permissions
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.db.models import Q
+from .models import Post, Comment, Like
+from .serializers import PostSerializer, CommentSerializer, LikeSerializer
+
+
+
+class PostViewSet(viewsets.ModelViewSet):
+    
+    # Ultra-simple Post ViewSet
+    
+    parser_classes = [MultiPartParser, FormParser]
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        queryset = Post.objects.select_related('author').prefetch_related('comments', 'like_set')
+        
+        if self.request.user.is_authenticated:
+            return queryset.filter(Q(visibility='public') | Q(author=self.request.user))
+        return queryset.filter(visibility='public')
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated()]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+
+
+
+class CommentViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
+    
+    # Simple Comment creation only
+    
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+
+
+
+
+class LikeViewSet(viewsets.GenericViewSet):
+    
+    # Simple Like toggle
+    
+    permission_classes = [permissions.IsAuthenticated]
+
+    @action(detail=False, methods=['post'])
+    def toggle(self, request):
+        content_type = request.data.get('content_type')
+        object_id = request.data.get('object_id')
+        
+        like, created = Like.objects.get_or_create(
+            user=request.user,
+            content_type=content_type,
+            object_id=object_id
+        )
+        
+        if not created:
+            like.delete()
+            return Response({'liked': False})
+        
+        return Response({'liked': True})
