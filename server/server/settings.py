@@ -47,13 +47,14 @@ INSTALLED_APPS = [
 
     # Local apps
     'authentication',
+    'posts',
 ]
 
 
 # CORS Configuration
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -102,6 +103,14 @@ REST_FRAMEWORK = {
 }
 
 
+
+AUTHENTICATION_BACKENDS = [
+    'authentication.backends.EmailBackend', 
+    'django.contrib.auth.backends.ModelBackend',  
+]
+
+
+
 # JWT Configuration
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
@@ -141,6 +150,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+AUTH_USER_MODEL = 'authentication.CustomUser'
 
 
 # Internationalization
