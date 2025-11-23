@@ -1,10 +1,20 @@
-# Python
+# Python virtual environment
 server/venv/
+
+# Python bytecode
 *.pyc
 __pycache__/
 
-# Node
-client/node_modules
+# Django migrations
+server/**/migrations/
+!server/**/migrations/__init__.py  # keep __init__.py for Django
 
-# OS
+# Database
+db.sqlite3
+server/db.sqlite3
+
+# Node modules
+client/node_modules/
+
+# OS files
 .DS_Store
