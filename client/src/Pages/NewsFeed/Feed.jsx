@@ -58,17 +58,12 @@ const Feed = () => {
   ];
 
 
-  const handlePostCreated = (newPost) => {
-    // Add the new post to the posts list
-    setPosts(prevPosts => [newPost, ...prevPosts]);
-  };
-
-
   return (
     <div className="feed-container mt-24">
       <div className="feed-layout">
         {/* Left Sidebar - Explore Section */}
         <div className="feed-sidebar left-sidebar">
+
           <div className="explore-section">
             <h3 className="section-title">Explore</h3>
             <div className="explore-list">
@@ -80,6 +75,37 @@ const Feed = () => {
               ))}
             </div>
           </div>
+
+
+           {/* Friends Suggestion */}
+          <div className="friends-list mt-2">
+            <h3 className="section-title">Suggestions</h3>
+            {friends.map((friend, index) => (
+              <div key={index} className="friend-card flex items-center justify-between p-2 border-b">
+                
+                {/* Friend Info */}
+                <div className="friend-user flex items-center gap-2">
+                  <img className="user-avatar rounded-full w-10 h-10 object-cover" src={friend.profile} alt="profile" />
+                  <div className="user-details">
+                    <div className="user-name font-medium">{friend.name}</div>
+                    {friend.role && <div className="user-role text-sm text-gray-500">{friend.role}</div>}
+                    {friend.time && <div className="user-time text-xs text-gray-400">{friend.time}</div>}
+                    {friend.privacy && <div className="user-privacy text-xs text-gray-400">{friend.privacy}</div>}
+                  </div>
+                </div>
+
+                {/* Connect Button */}
+                <button
+                  className="connect-btn bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-blue-600"
+                  onClick={() => console.log(`Connect with ${friend.name}`)}
+                >
+                  +
+                </button>
+              </div>
+            ))}
+          </div>
+
+
         </div>
 
         {/* Main Content - Feed */}
