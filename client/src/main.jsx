@@ -8,6 +8,7 @@ import { UserProvider } from "./Provider/UserProvider.jsx";
 import ProtectedRoute from "./Provider/ProtectedRoute.jsx";
 import Login from "./Components/Auth/Login.jsx";
 import Register from "./Components/Auth/Register.jsx";
+import Feed from "./Pages/NewsFeed/Feed.jsx";
 
 const router = createBrowserRouter([
   // ----------------------------
@@ -33,7 +34,7 @@ const router = createBrowserRouter([
         index: true,
         element: (
           <ProtectedRoute>
-            {/* Dashboard / Home component */}
+           <Feed></Feed>
           </ProtectedRoute>
         ),
       },

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useUser } from "../../Provider/UserProvider";
 import { useNavigate, Link } from "react-router-dom";
-import AxiosInstance from "../AxiosInstance";
+import AxiosInstance from '../AxiosInstance'
 import LoginImage from '../../assets/images/login.png';
 import GoogleImage from '../../assets/images/google.svg'
 import mainLogo from '../../assets/images/logo.svg'
@@ -18,10 +18,6 @@ const Login = () => {
     email: "",
     password: "",
   });
-  const isDevelopment = import.meta.env.MODE === 'development';
-const baseurl = isDevelopment ? import.meta.env.VITE_API_BASE_URL_LOCAL : import.meta.env.VITE_API_BASE_URL_PROD;
-
-
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -60,20 +56,13 @@ const baseurl = isDevelopment ? import.meta.env.VITE_API_BASE_URL_LOCAL : import
   setErrors({});
 
   try {
-    console.log("🔄 Sending login request with data:", formData);
-    console.log("📡 API Base URL:", baseurl);
-    
     const response = await AxiosInstance.post("auth/login/", formData);
-
-    console.log("✅ Login successful! Response:", response.data);
 
     const { user, tokens } = response.data;
     
-    console.log("💾 Storing tokens...");
     storeTokens(tokens.access, tokens.refresh);
     setUser(user);
     
-    console.log("🚀 Navigating to feed...");
     navigate("/feed", { replace: true });
     
   } catch (error) {

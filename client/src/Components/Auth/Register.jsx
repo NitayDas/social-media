@@ -60,8 +60,6 @@ const Register = () => {
           password_confirm: formData.confirmPassword,
         });
 
-        console.log("response", response.data)
-
         const { user, tokens } = response.data;
 
         // Set user and store tokens

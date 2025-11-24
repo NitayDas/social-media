@@ -13,10 +13,9 @@ export default function Root() {
     location.pathname === "/";
 
   return (
-    <div>
+    <div className="px-24">
       {!hideLayout && <Navbar />}
       <Outlet />
-      {!hideLayout && <Footer />}
     </div>
   );
 }

@@ -9,6 +9,7 @@ const csrfToken = document.cookie.match(/csrftoken=([\w-]+)/)?.[1];
 const AxiosInstance = axios.create({
   baseURL: baseurl,
   headers: {
+
     accept: "application/json",
     "X-CSRFToken": csrfToken ? csrfToken : "", 
   },
@@ -19,7 +20,6 @@ AxiosInstance.interceptors.request.use(
 (config) => {
       const token = localStorage.getItem("access_token");
       if (token) {
-        console.log("Token Acccessed")
         config.headers["Authorization"] = `Bearer ${token}`;
       }
 
