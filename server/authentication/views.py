@@ -14,7 +14,30 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 class UserRegistrationView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        # Create JWT tokens
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            'message': 'Registration successful',
+            'user': {
+                'id': user.id,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+            },
+            'tokens': {
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            }
+        }, status=status.HTTP_201_CREATED)
+
 
 
 
@@ -23,6 +46,8 @@ class UserLoginView(generics.GenericAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        # Print email and password from frontend
+        print("Login request data:", request.data)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
@@ -42,6 +67,7 @@ class UserLoginView(generics.GenericAPIView):
                 'access': str(refresh.access_token),
             }
         }, status=status.HTTP_200_OK)
+
 
 
 

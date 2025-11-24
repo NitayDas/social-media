@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-bnx*@=23$lp__ymj^*)x-s_ekylgf=tzs(6cxkh^5kkp(i=j5k
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -58,6 +58,16 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173", 
+    "http://127.0.0.1",
+    "https://nas.com.bd",
+    "http://nas.com.bd",
+    "https://www.nas.com.bd",
+    "http://www.nas.com.bd",
+]
 
 
 MIDDLEWARE = [
