@@ -13,6 +13,9 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = '__all__'
         read_only_fields = ('author', 'created_at', 'updated_at')
+        
+    def get_author(self, obj):
+        return f"{obj.author.first_name} {obj.author.last_name}"
 
     def get_likes_count(self, obj):
         post_type = ContentType.objects.get_for_model(Post)
@@ -39,10 +42,15 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
         read_only_fields = ('author', 'created_at', 'updated_at')
+        
+        
+    def get_author(self, obj):
+        return f"{obj.author.first_name} {obj.author.last_name}"
 
     def get_likes_count(self, obj):
         return Like.objects.filter(content_type='comment', object_id=obj.id).count()
-
+    
+    
 
 
 class LikeSerializer(serializers.ModelSerializer):

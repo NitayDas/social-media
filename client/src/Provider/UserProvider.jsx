@@ -34,7 +34,7 @@ export const UserProvider = ({ children }) => {
     try {
       setLoading(true);
 
-      const res = await AxiosInstance.get("user/");
+      const res = await AxiosInstance.get("auth/profile/");
       setUser(res.data);
 
       localStorage.setItem("user", JSON.stringify(res.data));

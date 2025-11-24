@@ -14,6 +14,7 @@ import profile5 from '../../assets/images/f5.png'
 import profile6 from '../../assets/images/f6.png'
 import profile7 from '../../assets/images/f7.png'
 import CreatePost from './Posts/CreatePost';
+import Post from './Posts/Post';
 
 
 const Feed = () => {
@@ -84,8 +85,6 @@ const Feed = () => {
         {/* Main Content - Feed */}
         <div className="feed-main">
 
-
-
           {/* Story Section */}
           <div className="story-section">
             <div className="stories-container">
@@ -114,67 +113,11 @@ const Feed = () => {
             </div>
           </div>
 
-
-          {/* Create Post Section */}
-          {/* <div className="create-post-section">
-            <div className="your-story">
-              <div className="story-avatar">👤</div>
-              <div className="story-input">
-                <input 
-                  type="text" 
-                  placeholder="Write something - 🔍"
-                  className="story-input-field"
-                />
-              </div>
-            </div>
-            
-            <div className="post-options">
-              <button className="post-option">
-                <span className="option-icon">🖼️</span>
-                <span className="option-text">Photo</span>
-              </button>
-              <button className="post-option">
-                <span className="option-icon">🎥</span>
-                <span className="option-text">Video</span>
-              </button>
-              <button className="post-option">
-                <span className="option-icon">📅</span>
-                <span className="option-text">Event</span>
-              </button>
-              <button className="post-option">
-                <span className="option-icon">📄</span>
-                <span className="option-text">Article</span>
-              </button>
-              <button className="post-option">
-                <span className="option-icon">✏️</span>
-                <span className="option-text">Post</span>
-              </button>
-            </div>
-          </div> */}
-
-
-          {/* Create Post Component */}
-          <CreatePost onPostCreated={handlePostCreated} />
-
           {/* Feed Posts */}
-          <div className="posts-section">
-            {/* You can map through actual posts here */}
-            <div className="post-card">
-              <div className="post-header">
-                <div className="post-user">
-                  <div className="user-avatar">👨‍💼</div>
-                  <div className="user-info">
-                    <div className="user-name">Healthy Tracking App</div>
-                    <div className="post-time">Sponsored</div>
-                  </div>
-                </div>
-              </div>
-              <div className="post-content">
-                {/* Post content would go here */}
-              </div>
-            </div>
-          </div>
+          <Post/>
+
         </div>
+         
 
         {/* Right Sidebar - Suggestions & Friends */}
         <div className="feed-sidebar right-sidebar">

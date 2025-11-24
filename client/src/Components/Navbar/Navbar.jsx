@@ -5,9 +5,15 @@ import { IoHomeOutline } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
 import Logo from '../../assets/images/logo.svg'
 import profile from '../../assets/images/f2.png'
+import { useUser } from "../../Provider/UserProvider";
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const {signOut} = useUser();
+
+  const handleLogout = () => {
+    signOut();
+  };
 
   return (
     <nav className="_header_nav _header_nav_shadow w-full bg-white fixed top-0 left-0 z-50">
@@ -16,7 +22,7 @@ const Navbar = () => {
         {/* Left: Logo */}
         <div className="_logo_wrap flex items-center">
           <img
-            src={Logo} // ← add logo later
+            src={Logo}
             alt="Logo"
             className="h-7 w-auto"
           />
@@ -46,7 +52,7 @@ const Navbar = () => {
             <input
               type="text"
               placeholder="input search text"
-              className="w-2/3 bg-gray-100 rounded-full pl-12 pr-4 py-2 text-gray-700 ocus:border-blue-300 focus:ring-1 focus:ring-blue-300 outline-none transition"
+              className="w-2/3 bg-gray-100 rounded-full pl-12 pr-4 py-2 text-gray-700 focus:border-blue-300 focus:ring-1 focus:ring-blue-300 outline-none transition"
             />
           </div>
         </div>
@@ -77,23 +83,42 @@ const Navbar = () => {
           </div>
 
           {/* Profile */}
-          <div
-            className="_header_nav_profile cursor-pointer flex items-center"
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-          >
-            <img
-              src={profile} // ← profile image empty now
-              alt="Profile"
-              className="_header_nav_profile_image rounded-full h-8 w-8 object-cover"
-            />
+          <div className="relative">
+            <div
+              className="_header_nav_profile cursor-pointer flex items-center"
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+            >
+              <img
+                src={profile}
+                alt="Profile"
+                className="_header_nav_profile_image rounded-full h-8 w-8 object-cover"
+              />
+              <p className="_header_nav_para ml-2 font-medium">
+                Dylan Field
+              </p>
+              <button className="_header_nav_dropdown_btn ml-1">
+                <IoIosArrowDown size={18} className="text-gray-600" />
+              </button>
+            </div>
 
-            <p className="_header_nav_para ml-2 font-medium">
-              Dylan Field
-            </p>
-
-            <button className="_header_nav_dropdown_btn ml-1">
-              <IoIosArrowDown size={18} className="text-gray-600" />
-            </button>
+            {/* Dropdown Menu */}
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-md border border-gray-200 z-50">
+                <NavLink
+                  to="/profile"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  Profile
+                </NavLink>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
 
         </div>

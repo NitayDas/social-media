@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
 import '../Feed.css';
-import profile2 from '../../../assets/images/f2.png'
+import profile2 from '../../../assets/images/f2.png';
 import AxiosInstance from '../../../Components/AxiosInstance';
-
 
 const CreatePost = ({ onPostCreated }) => {
   const [postContent, setPostContent] = useState('');
@@ -19,22 +18,23 @@ const CreatePost = ({ onPostCreated }) => {
     try {
       const formData = new FormData();
       formData.append('content', postContent);
-      formData.append('timestamp', new Date().toISOString());
       if (selectedImage) {
         formData.append('image', selectedImage);
       }
 
-      const response = await AxiosInstance.post('posts/',formData);
+      // Axios request
+      const response = await AxiosInstance.post('posts/', formData);
 
-      if (response.ok) {
-        const newPost = await response.json();
-        setPostContent('');
-        setSelectedImage(null);
-        if (onPostCreated) onPostCreated(newPost);
-        console.log('Post created successfully');
-      } else {
-        console.error('Failed to create post');
-      }
+      const newPost = response.data; // Axios returns data here
+
+      // Clear form fields
+      setPostContent('');
+      setSelectedImage(null);
+
+      // Add the new post to the list
+      if (onPostCreated) onPostCreated(newPost);
+
+      console.log('Post created successfully');
     } catch (error) {
       console.error('Error creating post:', error);
     } finally {
@@ -44,19 +44,15 @@ const CreatePost = ({ onPostCreated }) => {
 
   const handleOptionClick = (option) => {
     if (option === 'photo') {
-      // Open file picker for photo
       fileInputRef.current.click();
     } else {
-      console.log(`Selected option: ${option}`);
       handlePostSubmit();
     }
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setSelectedImage(file);
-    }
+    if (file) setSelectedImage(file);
   };
 
   return (
@@ -66,7 +62,6 @@ const CreatePost = ({ onPostCreated }) => {
           <img src={profile2} className="story-avatar" alt="" />
           <div className="story-input">
             <textarea
-              type="text"
               placeholder="Write something ..."
               value={postContent}
               onChange={(e) => setPostContent(e.target.value)}
@@ -100,34 +95,32 @@ const CreatePost = ({ onPostCreated }) => {
             className="post-option"
             onClick={() => handleOptionClick('photo')}
           >
-            <span className="option-icon">🖼️</span>
-            <span className="option-text">Photo</span>
+            🖼️ Photo
           </button>
           <button
             type="button"
             className="post-option"
             onClick={() => handleOptionClick('video')}
           >
-            <span className="option-icon">🎥</span>
-            <span className="option-text">Video</span>
+            🎥 Video
           </button>
           <button
             type="button"
             className="post-option"
             onClick={() => handleOptionClick('event')}
           >
-            <span className="option-icon">📅</span>
-            <span className="option-text">Event</span>
+            📅 Event
           </button>
           <button
             type="button"
             className="post-option"
             onClick={() => handleOptionClick('article')}
           >
-            <span className="option-icon">📄</span>
-            <span className="option-text">Article</span>
+            📄 Article
           </button>
-          <button
+
+
+           <button
             type="submit"
             className="post-option"
             disabled={isPosting || (!postContent.trim() && !selectedImage)}
@@ -137,6 +130,7 @@ const CreatePost = ({ onPostCreated }) => {
               {isPosting ? 'Posting...' : 'Post'}
             </span>
           </button>
+
         </div>
       </form>
     </div>

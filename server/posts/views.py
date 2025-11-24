@@ -7,6 +7,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.db.models import Q
 from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer, LikeSerializer
+from rest_framework.views import APIView
 
 
 
@@ -18,11 +19,12 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
 
     def get_queryset(self):
-        queryset = Post.objects.select_related('author').prefetch_related('comments', 'like_set')
+        queryset = Post.objects.select_related('author').prefetch_related('comments')
         
         if self.request.user.is_authenticated:
             return queryset.filter(Q(visibility='public') | Q(author=self.request.user))
         return queryset.filter(visibility='public')
+
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -35,13 +37,19 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
 
-class CommentViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
-    
-    # Simple Comment creation only
-    
+class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated]
+    
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        post_id = self.request.query_params.get('post')
+        if post_id:
+            queryset = queryset.filter(post_id=post_id)
+        return queryset
+
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -49,9 +57,7 @@ class CommentViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
 
 
 
-
 class LikeViewSet(viewsets.GenericViewSet):
-    
     # Simple Like toggle
     
     permission_classes = [permissions.IsAuthenticated]
