@@ -4,6 +4,8 @@ import LikeButton from './LikeButton';
 import profile from '../../assets/images/f2.png';
 import '../../Pages/NewsFeed/Feed.css';
 import AxiosInstance from '../AxiosInstance';
+import { FaGlobe, FaLock } from 'react-icons/fa';
+import { useUser } from '../../Provider/UserProvider';
 
 const PostCard = ({ post }) => {
   const [commentsVisible, setCommentsVisible] = useState(false);
@@ -11,8 +13,11 @@ const PostCard = ({ post }) => {
   const [latestComment, setLatestComment] = useState(null);
   const [newComment, setNewComment] = useState('');
   const [commentsCount, setCommentsCount] = useState(post.comments_count || 0);
+  const [visibility, setVisibility] = useState(post.visibility || 'public'); // default public
+  const [isUpdatingVisibility, setIsUpdatingVisibility] = useState(false);
+  const {user} = useUser();
+  const loggedInUserId = user.id;
 
-  // Fetch latest comment on mount
   useEffect(() => {
     const fetchLatestComment = async () => {
       try {
@@ -27,7 +32,6 @@ const PostCard = ({ post }) => {
     fetchLatestComment();
   }, [post.id]);
 
-  // Fetch all comments when opening
   const toggleComments = async () => {
     setCommentsVisible(!commentsVisible);
     if (!commentsVisible && comments.length === 0) {
@@ -40,7 +44,6 @@ const PostCard = ({ post }) => {
     }
   };
 
-  // Add a new comment
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
     try {
@@ -48,7 +51,7 @@ const PostCard = ({ post }) => {
         post: post.id,
         content: newComment,
       });
-      setLatestComment(response.data); // show new comment immediately
+      setLatestComment(response.data);
       setComments(prev => [...prev, response.data]);
       setCommentsCount(prev => prev + 1);
       setNewComment('');
@@ -58,65 +61,91 @@ const PostCard = ({ post }) => {
     }
   };
 
+  // Toggle visibility between public and private
+  const handleToggleVisibility = async () => {
+    const newVisibility = visibility === 'public' ? 'private' : 'public';
+    setIsUpdatingVisibility(true);
+    const formData = new FormData();
+    formData.append('visibility', newVisibility);
+    try {
+      const response = await AxiosInstance.patch(`posts/${post.id}/`, formData);
+      setVisibility(response.data.visibility);
+    } catch (err) {
+      console.error('Failed to update visibility', err);
+    } finally {
+      setIsUpdatingVisibility(false);
+    }
+  };
+
   return (
     <div className="post-card">
       {/* Post Header */}
-      <div className="post-header">
-        <div className="post-user">
+      <div className="post-header flex justify-between items-center">
+        <div className="post-user flex items-center gap-2">
           <img src={profile} className="user-avatar" alt="Profile" />
           <div className="user-info">
             <div className="user-name">{post.author}</div>
             <div className="post-time">{new Date(post.created_at).toLocaleString()}</div>
           </div>
         </div>
+
+        {/* Only show if this is my post */}
+        {post.author_id === Number(loggedInUserId) && (
+          <button
+            onClick={handleToggleVisibility}
+            className="px-3 py-1 rounded text-gray-400"
+            disabled={isUpdatingVisibility}
+          >
+            {visibility === 'public' ? <FaGlobe /> : <FaLock />}
+          </button>
+        )}
       </div>
 
       {/* Post Content */}
-      <div className="post-content">
+      <div className="post-content mt-2">
         <p className="text-black text-lg">{post.content}</p>
         {post.image && (
-          <img src={post.image} alt="Post" className="post-image" />
+          <img src={post.image} alt="Post" className="post-image mt-2" />
         )}
       </div>
 
       {/* Post Actions */}
-      <div className="post-options mt-1">
+      <div className="post-options mt-2 flex gap-4 items-center">
         <LikeButton post={post} />
         <button className="text-base" onClick={toggleComments}>
           💬 Comments ({commentsCount})
         </button>
       </div>
 
-       {/* Latest Comment */}
+      {/* Latest Comment */}
       {latestComment && !commentsVisible && (
         <div className="comment-card mt-2">
-            <div className="comment-author">{latestComment.author}</div>
-            <div className="comment-content">{latestComment.content}</div>
-            <div className="comment-actions">
-              <LikeButton comment={latestComment} />
-            </div>
+          <div className="comment-author">{latestComment.author}</div>
+          <div className="comment-content">{latestComment.content}</div>
+          <div className="comment-actions">
+            <LikeButton comment={latestComment} />
+          </div>
         </div>
       )}
 
-
       {/* Comment Input */}
-    {commentsVisible && (
-      <div className="comment-input-section mt-2 flex gap-2">
-        <input
-          type="text"
-          placeholder="Write a comment..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-        />
-        <button
-          onClick={handleAddComment}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-        >
-          Post
-        </button>
+      {commentsVisible && (
+        <div className="comment-input-section mt-2 flex gap-2">
+          <input
+            type="text"
+            placeholder="Write a comment..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+          <button
+            onClick={handleAddComment}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          >
+            Post
+          </button>
         </div>
-       )}
+      )}
 
       {/* Nested Comments */}
       {commentsVisible && comments.length > 0 && (
