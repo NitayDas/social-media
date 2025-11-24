@@ -61,6 +61,41 @@ const PostCard = ({ post }) => {
     }
   };
 
+
+
+  const handleReply = async (parentId, replyText) => {
+      try {
+        const response = await AxiosInstance.post("comments/", {
+          post: post.id,
+          parent: parentId,
+          content: replyText
+        });
+
+        const newReply = response.data;
+
+        // Add reply into correct place
+        const addReplyToTree = (commentsList) =>
+          commentsList.map(c => {
+            if (c.id === parentId) {
+              return {
+                ...c,
+                replies: [...(c.replies || []), newReply]
+              };
+            }
+            return {
+              ...c,
+              replies: c.replies ? addReplyToTree(c.replies) : []
+            };
+          });
+
+        setComments(prev => addReplyToTree(prev));
+        
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+
   // Toggle visibility between public and private
   const handleToggleVisibility = async () => {
     const newVisibility = visibility === 'public' ? 'private' : 'public';
@@ -149,7 +184,7 @@ const PostCard = ({ post }) => {
 
       {/* Nested Comments */}
       {commentsVisible && comments.length > 0 && (
-        <CommentList comments={comments} />
+        <CommentList comments={comments} onReply={handleReply}/>
       )}
     </div>
   );
