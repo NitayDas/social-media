@@ -13,7 +13,7 @@ import profile4 from '../../assets/images/f4.png'
 import profile5 from '../../assets/images/f5.png'
 import profile6 from '../../assets/images/f6.png'
 import profile7 from '../../assets/images/f7.png'
-import CreatePost from './CreatePost';
+import CreatePost from './Posts/CreatePost';
 
 
 const Feed = () => {

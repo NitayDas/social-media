@@ -4,7 +4,6 @@ from django.conf import settings
 
 
 
-
 class Post(models.Model):
     VISIBILITY = [
         ('public', 'Public'),

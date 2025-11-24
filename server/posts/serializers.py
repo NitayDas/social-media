@@ -1,7 +1,6 @@
-# server/posts/serializers.py
 from rest_framework import serializers
+from django.contrib.contenttypes.models import ContentType
 from .models import Post, Comment, Like
-
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -16,7 +15,8 @@ class PostSerializer(serializers.ModelSerializer):
         read_only_fields = ('author', 'created_at', 'updated_at')
 
     def get_likes_count(self, obj):
-        return obj.like_set.filter(content_type='post').count()
+        post_type = ContentType.objects.get_for_model(Post)
+        return Like.objects.filter(content_type='post', object_id=obj.id).count()
 
     def get_comments_count(self, obj):
         return obj.comments.count()
@@ -24,9 +24,10 @@ class PostSerializer(serializers.ModelSerializer):
     def get_has_liked(self, obj):
         request = self.context.get('request')
         if request and request.user.is_authenticated:
-            return obj.like_set.filter(content_type='post', user=request.user).exists()
+            return Like.objects.filter(
+                content_type='post', object_id=obj.id, user=request.user
+            ).exists()
         return False
-
 
 
 
@@ -40,8 +41,7 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = ('author', 'created_at', 'updated_at')
 
     def get_likes_count(self, obj):
-        return obj.like_set.filter(content_type='comment').count()
-
+        return Like.objects.filter(content_type='comment', object_id=obj.id).count()
 
 
 
