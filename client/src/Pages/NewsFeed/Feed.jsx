@@ -185,22 +185,31 @@ const Feed = () => {
               />
             </div>
 
-            {/* Friends List */}
+           {/* Friends List */}
             <div className="friends-list">
               {friends.map((friend, index) => (
-                <div key={index} className="friend-card">
-                  <div className="friend-user">
-                     <img className="user-avatar" src={friend.profile} alt="profile" />
+                <div key={index} className="friend-card flex items-center justify-between p-2 border-b">
+                  
+                  <div className="friend-user flex items-center gap-2">
+                    <img className="user-avatar w-10 h-10 rounded-full" src={friend.profile} alt="profile" />
+                    
                     <div className="user-details">
-                      <div className="user-name">{friend.name}</div>
-                      {friend.role && <div className="user-role">{friend.role}</div>}
-                      {friend.time && <div className="user-time">{friend.time}</div>}
-                      {friend.privacy && <div className="user-privacy">{friend.privacy}</div>}
+                      <div className="user-name font-medium">{friend.name}</div>
+                      {friend.role && <div className="user-role text-sm text-gray-500">{friend.role}</div>}
+                      {friend.time && <div className="user-time text-sm text-gray-400">{friend.time}</div>}
+                      {friend.privacy && <div className="user-privacy text-sm text-gray-400">{friend.privacy}</div>}
                     </div>
                   </div>
+
+                  {/* Green dot for active friends (no time) */}
+                  {!friend.time && (
+                    <span className="w-2 h-2 bg-green-500 rounded-full" title="Active"></span>
+                  )}
+                  
                 </div>
               ))}
             </div>
+
           </div>
         </div>
       </div>

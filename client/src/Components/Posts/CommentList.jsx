@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import LikeButton from './LikeButton';
-import { FaUserCircle } from "react-icons/fa";
+import { FaUserCircle, FaReply } from "react-icons/fa";
 
-const CommentList = ({ comments, onReply }) => {
+const CommentList = ({ comments, onReply}) => {
   const [replyBox, setReplyBox] = useState(null);
   const [replyText, setReplyText] = useState("");
+
 
   const handleReplySubmit = (commentId) => {
     if (!replyText.trim()) return;
@@ -13,40 +14,42 @@ const CommentList = ({ comments, onReply }) => {
     setReplyBox(null);
   };
 
+
   return (
     <div className="comment-list mt-2">
       {comments.map(comment => (
-        <div key={comment.id} className="comment-card">
-
+        <div 
+          key={comment.id} 
+          className={`mb-3 ${comment.parent ? "ml-9" : "ml-0"}`}
+        >
           {/* Avatar + Author */}
           <div className="flex items-center gap-2 mb-1">
             <FaUserCircle className="text-gray-500" size={28} />
-            
-            <div className="comment-author font-medium text-sm">
+            <div className="comment-author font-semibold text-sm">
               {comment.author}
             </div>
           </div>
 
           {/* Comment content */}
-          <div className="comment-content ml-9 text-gray-800">
+          <div className="comment-content text-sm text-gray-700">
             {comment.content}
           </div>
 
           {/* Actions */}
-          <div className="comment-actions ml-9 flex gap-3 items-center mt-1">
+          <div className="comment-actions flex gap-3 items-center mt-1">
             <LikeButton comment={comment} />
-
             <button
-              className="text-sm text-blue-500"
+              className="text-sm text-blue-500 flex items-center gap-1"
               onClick={() => setReplyBox(replyBox === comment.id ? null : comment.id)}
             >
+              <FaReply size={14} />
               Reply
             </button>
           </div>
 
           {/* Reply input */}
           {replyBox === comment.id && (
-            <div className="reply-input mt-2 ml-9 flex gap-2">
+            <div className="reply-input mt-2 flex gap-2">
               <input
                 type="text"
                 value={replyText}
@@ -65,11 +68,13 @@ const CommentList = ({ comments, onReply }) => {
 
           {/* Recursive replies */}
           {comment.replies && comment.replies.length > 0 && (
-            <div className="comment-replies ml-9 mt-2">
-              <CommentList comments={comment.replies} onReply={onReply} />
+            <div className="comment-replies mt-2">
+              <CommentList 
+                comments={comment.replies} 
+                onReply={onReply}  
+              />
             </div>
           )}
-
         </div>
       ))}
     </div>

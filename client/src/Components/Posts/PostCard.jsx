@@ -155,8 +155,8 @@ const PostCard = ({ post }) => {
       {/* Latest Comment */}
       {latestComment && !commentsVisible && (
         <div className="comment-card mt-2">
-          <div className="comment-author">{latestComment.author}</div>
-          <div className="comment-content">{latestComment.content}</div>
+          <div className="comment-author text-sm font-semibold ml-2">{latestComment.author}</div>
+          <div className="comment-content text-sm text-gray-800 ml-4">{latestComment.content}</div>
           <div className="comment-actions">
             <LikeButton comment={latestComment} />
           </div>
